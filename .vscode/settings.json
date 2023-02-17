@@ -1,0 +1,11 @@
+{
+	"files.exclude": {
+		"**/.config/**" : true,
+		".git/**" : true,
+		".idea/**" : true,
+		".svn/**" : true,
+		"**/bin/**" : true,
+		"**/obj/**" : true,
+		"**/.github/**" : true
+	}
+}
