@@ -22,10 +22,12 @@ public class OpenHoi : Game
     private SpriteBatch _spriteBatch;
 	public ImGuiRenderer GUIRenderer; 
 	public List<Scenario> Scenarios = new List<Scenario>();
+	private Gui _gui;
 
     public OpenHoi()
 	{
         _graphics = new GraphicsDeviceManager(this);
+		_gui = new Gui(this);
         Content.RootDirectory = "Game";
         IsMouseVisible = true;
     }
@@ -69,6 +71,8 @@ public class OpenHoi : Game
         base.Draw(gameTime);
 
 		GUIRenderer.BeginLayout(gameTime);
+
+		_gui.Draw(gameTime);
 
 		ImGui.Begin("OpenHoi");
 		ImGui.Text($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
