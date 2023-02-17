@@ -18,7 +18,7 @@ public class OpenHoi : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-	public ImGUIRenderer GUIRenderer;
+	public ImGuiRenderer GUIRenderer;
 
 
     public OpenHoi()
@@ -28,11 +28,11 @@ public class OpenHoi : Game
         IsMouseVisible = true;
     }
 
-    protected async override void Initialize()
+    protected override void Initialize()
     {
 		var scenaries = new List<Scenario>();
 
-		Parallel.ForEach(Directory.GetDirectories("Game/Scenarios"), dir => 
+		Parallel.ForEach(Directory.GetDirectories("Game\\Scenarios"), dir => 
 			{
 				try {
 					var scenario = Scenario.Load(dir);
@@ -44,7 +44,7 @@ public class OpenHoi : Game
 			}
 		);
 
-		GUIRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
+		GUIRenderer = new ImGuiRenderer(this).Initialize().RebuildFontAtlas();
 
         base.Initialize();
     }
