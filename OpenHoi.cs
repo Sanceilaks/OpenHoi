@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using MonoGame.ImGui;
+using ImGuiNET;
 
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Diagnostics;
 using System;
+using System.Reflection;
 
 namespace OpenHoi;
 
@@ -18,8 +20,8 @@ public class OpenHoi : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-	public ImGuiRenderer GUIRenderer;
-
+	public ImGuiRenderer GUIRenderer; 
+	public List<Scenario> Scenarios = new List<Scenario>();
 
     public OpenHoi()
 	{
@@ -30,13 +32,11 @@ public class OpenHoi : Game
 
     protected override void Initialize()
     {
-		var scenaries = new List<Scenario>();
-
 		Parallel.ForEach(Directory.GetDirectories("Game\\Scenarios"), dir => 
 			{
 				try {
 					var scenario = Scenario.Load(dir);
-					scenaries.Add(scenario);
+					Scenarios.Add(scenario);
 					Debug.WriteLine($"Loaded \"{scenario.Name}\"", "OpenHoi");
 				} catch (Exception e) when (e is FileNotFoundException || e is ArgumentException) {
 					Debug.WriteLine($"Skipping {dir} due to \"{e.Message}\"", "OpenHoi");
@@ -66,9 +66,43 @@ public class OpenHoi : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        // TODO: Add your drawing code here
-
         base.Draw(gameTime);
+
+		GUIRenderer.BeginLayout(gameTime);
+
+		ImGui.Begin("OpenHoi");
+		ImGui.Text($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
+		ImGui.Text($"Author: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company}");
+		ImGui.Text($"Starts at: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
+		ImGui.End();
+
+		ImGui.Begin("Scenarios");
+		if (ImGui.BeginTable("Scenarios", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Hideable))
+		{
+			ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+			ImGui.TableSetupColumn("Description", ImGuiTableColumnFlags.WidthStretch);
+			ImGui.TableSetupColumn("Author", ImGuiTableColumnFlags.WidthStretch);
+			ImGui.TableSetupColumn("Starts at", ImGuiTableColumnFlags.WidthStretch);
+			ImGui.TableHeadersRow();
+
+			foreach (var scenario in Scenarios)
+			{
+				ImGui.TableNextRow();
+				ImGui.TableNextColumn();
+				ImGui.Text(scenario.Name);
+				ImGui.TableNextColumn();
+				ImGui.Text(scenario.Description);
+				ImGui.TableNextColumn();
+				ImGui.Text(scenario.Author);
+				ImGui.TableNextColumn();
+				ImGui.Text(scenario.StartsAt);
+			}
+
+			ImGui.EndTable();
+		}
+		ImGui.End();
+
+		GUIRenderer.EndLayout();
     }
 
 	protected override void UnloadContent()
