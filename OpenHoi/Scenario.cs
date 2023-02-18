@@ -6,17 +6,17 @@ namespace OpenHoi;
 
 public class Scenario 
 {
-	public string Name { get; set; }
-	public string Description { get; set; }
-	public string Author { get; set; }
-	public string StartsAt { get; set; }
+	public string? Name { get; set; }
+	public string? Description { get; set; }
+	public string? Author { get; set; }
+	public string? StartsAt { get; set; }
 
-	public Scenario(NLua.LuaTable table)
+	public Scenario(NLua.LuaTable? table)
 	{
-		Name = table["name"].ToString();
-		Description = table["description"].ToString();
-		Author = table["author"].ToString();
-		StartsAt = table["starts_at"].ToString();
+		Name = table!["name"].ToString();
+		Description = table!["description"].ToString();
+		Author = table!["author"].ToString();
+		StartsAt = table!["starts_at"].ToString();
 	}
 
 	public static Scenario Load(string directory)

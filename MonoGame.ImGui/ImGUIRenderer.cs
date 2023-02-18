@@ -199,8 +199,8 @@ public class ImGuiRenderer {
 
         for (var i = 0; i < drawData.CmdListsCount; ++i) {
             var commands = drawData.CmdListsRange[i];
-            fixed (void* vtxDstPtr = &_vertex.Data[vertexOffset * DrawVertDeclaration.Size])
-            fixed (void* idxDstPtr = &_index.Data[indexOffset * sizeof(ushort)]) {
+            fixed (void* vtxDstPtr = &_vertex.Data![vertexOffset * DrawVertDeclaration.Size])
+            fixed (void* idxDstPtr = &_index.Data![indexOffset * sizeof(ushort)]) {
                 Buffer.MemoryCopy((void*) commands.VtxBuffer.Data, vtxDstPtr, _vertex.Data.Length, commands.VtxBuffer.Size * DrawVertDeclaration.Size);
                 Buffer.MemoryCopy((void*) commands.IdxBuffer.Data, idxDstPtr, _index.Data.Length, commands.IdxBuffer.Size * sizeof(ushort));
             }
@@ -210,8 +210,8 @@ public class ImGuiRenderer {
         }
 
         // Copy the managed byte arrays to the gpu vertex- and index buffers
-        _vertex.Buffer.SetData(_vertex.Data, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
-        _index.Buffer.SetData(_index.Data, 0, drawData.TotalIdxCount * sizeof(ushort));
+        _vertex.Buffer!.SetData(_vertex.Data, 0, drawData.TotalVtxCount * DrawVertDeclaration.Size);
+        _index.Buffer!.SetData(_index.Data, 0, drawData.TotalIdxCount * sizeof(ushort));
     }
 
     private readonly IndexData _index;

@@ -6,7 +6,7 @@ namespace MonoGame.ImGui.Data;
 ///     Contains information regarding the index buffer used by the GUIRenderer.
 /// </summary>
 public class IndexData {
-    public IndexBuffer Buffer;
+    public IndexBuffer? Buffer;
     public int BufferSize;
-    public byte[] Data;
+    public byte[]? Data;
 }

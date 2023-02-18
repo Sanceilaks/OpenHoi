@@ -18,18 +18,21 @@ namespace OpenHoi;
 
 public class OpenHoi : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-	public ImGuiRenderer GUIRenderer; 
+    private GraphicsDeviceManager? _graphics;
+    private SpriteBatch? _spriteBatch;
+	public ImGuiRenderer? GUIRenderer; 
 	public List<Scenario> Scenarios = new List<Scenario>();
-	private Gui _gui;
+	private Gui? _gui;
 
     public OpenHoi()
 	{
+		LuaInterface.LuaInterface.Game = this;
         _graphics = new GraphicsDeviceManager(this);
 		_gui = new Gui(this);
         Content.RootDirectory = "Game";
         IsMouseVisible = true;
+
+		Window.AllowUserResizing = true;
     }
 
     protected override void Initialize()
@@ -70,14 +73,14 @@ public class OpenHoi : Game
 
         base.Draw(gameTime);
 
-		GUIRenderer.BeginLayout(gameTime);
+		GUIRenderer!.BeginLayout(gameTime);
 
-		_gui.Draw(gameTime);
+		_gui!.Draw(gameTime);
 
 		ImGui.Begin("OpenHoi");
 		ImGui.Text($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
-		ImGui.Text($"Author: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company}");
-		ImGui.Text($"Starts at: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
+		ImGui.Text($"Author: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>()!.Company}");
+		ImGui.Text($"Starts at: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion}");
 		ImGui.Text($"FPS: {(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)}");
 		ImGui.Text($"Debuggable: {Debugger.IsAttached}");
 		ImGui.End();

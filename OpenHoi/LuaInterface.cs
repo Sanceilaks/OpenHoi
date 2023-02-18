@@ -6,6 +6,7 @@ using NLua;
 
 public static class LuaInterface 
 {
+	public static OpenHoi? Game { get; set; }
 	private static void Print(string message)
 	{
 		Debug.WriteLine(message);
@@ -17,6 +18,7 @@ public static class LuaInterface
 		if (loadClr)
 		{
 			state.LoadCLRPackage();
+			state.SetObjectToPath("Game", Game);
 		}
 
 		state.DoString($@"

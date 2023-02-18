@@ -13,7 +13,7 @@ public class LuaModule
 	public Lua? Lua { get; private set; }
 	public bool ShouldReload { get; set; } = false;
 	public event FileSystemEventHandler? ModuleChanged;
-	private List<object> _moduleResults = new List<object>();
+	private List<object>? _moduleResults = new List<object>();
 	public List<object> ModuleResult { 
 		get 
 		{
@@ -23,13 +23,14 @@ public class LuaModule
 				ShouldReload = false;
 				Debug.WriteLine($"Reloaded \"{Path}\"", "OpenHoi[LUA]");
 			}
-			return _moduleResults;
+			return _moduleResults!;
 		} 
 	}
 	public bool AutoReload {get; set;} = false;
 	public bool IgnoreErrors { get; set; } = false;
 	public bool PrintErrors { get; set; } = true;
-	
+	private FileSystemWatcher? _watcher;
+
 	public LuaModule(Lua lua, string path, bool load = false, bool autoReload = false, 
 		bool ignoreLuaError = false, bool printLuaError = false)
 	{
@@ -53,19 +54,19 @@ public class LuaModule
 
 	private void CreateWatcher()
 	{
-		var watcher = new FileSystemWatcher(System.IO.Path.GetDirectoryName(Path), "*.lua");
-		watcher.NotifyFilter = NotifyFilters.LastWrite;
-		watcher.Changed += (sender, args) => ShouldReload = true;
-		watcher.Changed += ModuleChanged;
+		_watcher = new FileSystemWatcher(System.IO.Path.GetDirectoryName(Path)!, "*.lua");
+		_watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
+		_watcher.Changed += (sender, args) => ShouldReload = true;
+		_watcher.Changed += ModuleChanged;
 
-		watcher.EnableRaisingEvents = true;
+		_watcher.EnableRaisingEvents = true;
 	}
 
 	public object[]? Load(bool save = false)
 	{
 		try 
 		{
-			var result = Lua.DoFile(Path);
+			var result = Lua!.DoFile(Path);
 			if (save)
 				_moduleResults = result.ToList();
 			return result;
@@ -76,6 +77,8 @@ public class LuaModule
 				LuaInterface.ErrorMessage(ex.Message, Path);
 			if (!IgnoreErrors)
 				throw ex;
+			else
+				_moduleResults = null;
 			return null;
 		}
 	}

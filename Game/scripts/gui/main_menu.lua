@@ -15,7 +15,11 @@ return function (time)
 		imgui.EndTable();
 	end
 
-	imgui.Button('Hello, world!')
+	if imgui.Button('Hello, world!') then
+		print('Hello, world!')
+	end
+
+	imgui.Text(tostring(Game.Scenarios[0].Name))
 
 	imgui.End()
 end
