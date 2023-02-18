@@ -7,5 +7,10 @@
 		"**/bin/**" : true,
 		"**/obj/**" : true,
 		"**/.github/**" : true
-	}
+	},
+	"Lua.diagnostics.globals": [
+		"Game",
+		"import",
+		"ImGui"
+	]
 }
