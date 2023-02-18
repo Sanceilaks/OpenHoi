@@ -31,5 +31,12 @@ public static class LuaInterface
 		state.RegisterFunction("__print_impl", typeof(LuaInterface).GetMethod("Print", BindingFlags.Static | BindingFlags.NonPublic));
 		
 		return state;
-	} 
+	}
+
+	public static void ErrorMessage(string message, string? file = null)
+	{
+		if (file != null)
+			message += $" in \"{file}\"";
+		Debug.WriteLine(message, "OpenHoi[LUA]");
+	}
 }

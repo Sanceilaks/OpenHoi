@@ -6,5 +6,16 @@ return function (time)
 	if imgui.Button('Hello, world!') then
 		print('Hello, world!')
 	end
+
+	if imgui.BeginTable("Test Table", 3) then
+		imgui.TableSetupColumn("Column 1")
+		imgui.TableSetupColumn("Column 2")
+		imgui.TableSetupColumn("Column 3")
+		imgui.TableHeadersRow();
+		imgui.EndTable();
+	end
+
+	imgui.Button('Hello, world!')
+
 	imgui.End()
 end

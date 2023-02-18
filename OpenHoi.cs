@@ -78,6 +78,8 @@ public class OpenHoi : Game
 		ImGui.Text($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
 		ImGui.Text($"Author: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company}");
 		ImGui.Text($"Starts at: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
+		ImGui.Text($"FPS: {(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)}");
+		ImGui.Text($"Debuggable: {Debugger.IsAttached}");
 		ImGui.End();
 
 		ImGui.Begin("Scenarios");
