@@ -1,4 +1,4 @@
-local scn = require 'scenario_builder'
+local scn = require 'module_builder'
 
 return scn.new()
 	:set_author('voidptr_t')

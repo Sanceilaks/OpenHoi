@@ -18,101 +18,75 @@ namespace OpenHoi;
 
 public class OpenHoi : Game
 {
-    private GraphicsDeviceManager? _graphics;
-    private SpriteBatch? _spriteBatch;
-	public ImGuiRenderer? GUIRenderer; 
-	public List<Scenario> Scenarios = new List<Scenario>();
+	private Texture2D _texture;
+	private GraphicsDeviceManager? _graphics;
+	private SpriteBatch? _spriteBatch;
+	public ImGuiRenderer? GUIRenderer;
+	public List<Modification> Modifications = new List<Modification>();
 	private Gui? _gui;
 
-    public OpenHoi()
+	public OpenHoi()
 	{
 		LuaInterface.LuaInterface.Game = this;
-        _graphics = new GraphicsDeviceManager(this);
+		_graphics = new GraphicsDeviceManager(this);
 		_gui = new Gui(this);
-        Content.RootDirectory = "Game";
-        IsMouseVisible = true;
+		Content.RootDirectory = "Game";
+		IsMouseVisible = true;
 
 		Window.AllowUserResizing = true;
-    }
+	}
 
-    protected override void Initialize()
-    {
-		Parallel.ForEach(Directory.GetDirectories("Game\\Scenarios"), dir => 
+	protected override void Initialize()
+	{
+		GUIRenderer = new ImGuiRenderer(this).Initialize().RebuildFontAtlas();
+
+		base.Initialize();
+	}
+
+	protected override void LoadContent()
+	{
+		Parallel.ForEach(Directory.GetDirectories("Game\\Modifications"), dir =>
 			{
-				try {
-					var scenario = Scenario.Load(dir);
-					Scenarios.Add(scenario);
-					Debug.WriteLine($"Loaded \"{scenario.Name}\"", "OpenHoi");
-				} catch (Exception e) when (e is FileNotFoundException || e is ArgumentException) {
+				try
+				{
+					var modification = Modification.Load(dir);
+					Modifications.Add(modification);
+					Debug.WriteLine($"Loaded \"{modification.Name}\"", "OpenHoi");
+				}
+				catch (Exception e) when (e is FileNotFoundException || e is ArgumentException)
+				{
 					Debug.WriteLine($"Skipping {dir} due to \"{e.Message}\"", "OpenHoi");
 				}
 			}
 		);
 
-		GUIRenderer = new ImGuiRenderer(this).Initialize().RebuildFontAtlas();
+		_spriteBatch = new SpriteBatch(GraphicsDevice);
+		_texture = Texture2D.FromFile(GraphicsDevice, "Game/assets/texture.jpg");
+	}
 
-        base.Initialize();
-    }
+	protected override void Update(GameTime gameTime)
+	{
+		if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+			Exit();
 
-    protected override void LoadContent()
-    {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-    }
+		base.Update(gameTime);
+	}
 
-    protected override void Update(GameTime gameTime)
-    {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
+	protected override void Draw(GameTime gameTime)
+	{
+		GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        base.Update(gameTime);
-    }
+		_spriteBatch!.Begin();
+		_spriteBatch!.Draw(_texture, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
+		_spriteBatch!.End();
 
-    protected override void Draw(GameTime gameTime)
-    {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-
-        base.Draw(gameTime);
+		base.Draw(gameTime);
 
 		GUIRenderer!.BeginLayout(gameTime);
 
 		_gui!.Draw(gameTime);
-
-		ImGui.Begin("OpenHoi");
-		ImGui.Text($"Version: {Assembly.GetExecutingAssembly().GetName().Version}");
-		ImGui.Text($"Author: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCompanyAttribute>()!.Company}");
-		ImGui.Text($"Starts at: {Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion}");
-		ImGui.Text($"FPS: {(int)(1 / gameTime.ElapsedGameTime.TotalSeconds)}");
-		ImGui.Text($"Debuggable: {Debugger.IsAttached}");
-		ImGui.End();
-
-		ImGui.Begin("Scenarios");
-		if (ImGui.BeginTable("Scenarios", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable | ImGuiTableFlags.Reorderable | ImGuiTableFlags.Hideable))
-		{
-			ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-			ImGui.TableSetupColumn("Description", ImGuiTableColumnFlags.WidthStretch);
-			ImGui.TableSetupColumn("Author", ImGuiTableColumnFlags.WidthStretch);
-			ImGui.TableSetupColumn("Starts at", ImGuiTableColumnFlags.WidthStretch);
-			ImGui.TableHeadersRow();
-
-			foreach (var scenario in Scenarios)
-			{
-				ImGui.TableNextRow();
-				ImGui.TableNextColumn();
-				ImGui.Text(scenario.Name);
-				ImGui.TableNextColumn();
-				ImGui.Text(scenario.Description);
-				ImGui.TableNextColumn();
-				ImGui.Text(scenario.Author);
-				ImGui.TableNextColumn();
-				ImGui.Text(scenario.StartsAt);
-			}
-
-			ImGui.EndTable();
-		}
-		ImGui.End();
-
-		GUIRenderer.EndLayout();
-    }
+		GUIRenderer!.EndLayout();
+	}
 
 	protected override void UnloadContent()
 	{

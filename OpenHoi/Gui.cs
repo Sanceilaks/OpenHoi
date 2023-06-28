@@ -19,15 +19,6 @@ public class Gui
 
 	public void Draw(GameTime time)
 	{
-		if (_mainMenuModule.ModuleResult != null && _mainMenuModule.ModuleResult.Count > 0 && _mainMenuModule.ModuleResult[0] is NLua.LuaFunction)
-		{
-			var function = _mainMenuModule.ModuleResult[0] as NLua.LuaFunction;
-
-			try {
-				function!.Call(time.TotalGameTime.TotalSeconds);
-			} catch (NLua.Exceptions.LuaScriptException e) {
-				LuaInterface.LuaInterface.ErrorMessage(e.Message, _mainMenuModule.Path);
-			}
-		}
+		_mainMenuModule.CallModule(time.ElapsedGameTime.Milliseconds);
 	}
 }

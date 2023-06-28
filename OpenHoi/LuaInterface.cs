@@ -41,4 +41,14 @@ public static class LuaInterface
 			message += $" in \"{file}\"";
 		Debug.WriteLine(message, "OpenHoi[LUA]");
 	}
+
+	public static object[]? CallFunction(string module, LuaFunction function, params object[] args)
+	{
+		try {
+			return function!.Call(args);
+		} catch (NLua.Exceptions.LuaScriptException e) {
+			ErrorMessage(e.Message, module);
+			return null;
+		}
+	}
 }

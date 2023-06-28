@@ -1,4 +1,3 @@
-
 local sc = {}
 sc.__index = sc
 

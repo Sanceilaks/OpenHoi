@@ -19,7 +19,7 @@ return function (time)
 		print('Hello, world!')
 	end
 
-	imgui.Text(tostring(Game.Scenarios[0].Name))
+	imgui.Text(tostring(Game.Modifications[0].Name))
 
 	imgui.End()
 end

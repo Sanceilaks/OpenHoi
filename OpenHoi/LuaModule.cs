@@ -19,7 +19,7 @@ public class LuaModule
 		{
 			if (AutoReload && ShouldReload)
 			{
-				_moduleResults = Load(false)!.ToList();
+				_moduleResults = Load(true)!.ToList();
 				ShouldReload = false;
 				Debug.WriteLine($"Reloaded \"{Path}\"", "OpenHoi[LUA]");
 			}
@@ -81,5 +81,15 @@ public class LuaModule
 				_moduleResults = null;
 			return null;
 		}
+	}
+
+	public object[]? CallModule(params object[] args)
+	{
+		if (ModuleResult != null && ModuleResult.Count > 0 && ModuleResult[0] is NLua.LuaFunction)
+		{
+			var function = ModuleResult[0] as NLua.LuaFunction;
+			return LuaInterface.CallFunction(Path!, function!, args);
+		}
+		return null;
 	}
 }
