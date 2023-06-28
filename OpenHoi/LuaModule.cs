@@ -14,7 +14,8 @@ public class LuaModule
 	public bool ShouldReload { get; set; } = false;
 	public event FileSystemEventHandler? ModuleChanged;
 	private List<object>? _moduleResults = new List<object>();
-	public List<object> ModuleResult { 
+	public List<object> ModuleResult 
+	{ 
 		get 
 		{
 			if (AutoReload && ShouldReload)
